@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}TuberSYS 3.0{% endblock %}</title>
+
+    <!-- Font Awesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- CSS personnalisé -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    {% if current_user.is_authenticated %}
+    <!-- Layout avec sidebar pour les utilisateurs connectés -->
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <!-- Logo -->
+            <div class="sidebar-logo">
+                <div class="logo-icon">TS</div>
+                <div class="logo-text">
+                    <strong>TuberSys</strong>
+                    <small>{{ current_user.full_name }}</small>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="sidebar-nav">
+                {% set modules_by_category = {} %}
+                {% for module in current_user.get_accessible_modules() %}
+                    {% if module.category not in modules_by_category %}
+                        {% set _ = modules_by_category.update({module.category: []}) %}
+                    {% endif %}
+                    {% set _ = modules_by_category[module.category].append(module) %}
+                {% endfor %}
+
+                {% for category, modules in modules_by_category.items() %}
+                <div class="nav-section">
+                    <div class="nav-section-title">{{ category }}</div>
+                    {% for module in modules %}
+                    <a href="{{ url_for(module.code) }}" class="nav-item {% if request.endpoint == module.code %}active{% endif %}">
+                        <i class="fas {{ module.icon }}"></i>
+                        <span>{{ module.name }}</span>
+                    </a>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+
+                {% if current_user.is_admin %}
+                <div class="nav-section">
+                    <div class="nav-section-title">ADMINISTRATION</div>
+                    <a href="{{ url_for('admin') }}" class="nav-item {% if request.endpoint.startswith('admin') %}active{% endif %}">
+                        <i class="fas fa-cog"></i>
+                        <span>Administration</span>
+                    </a>
+                </div>
+                {% endif %}
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <header class="app-header">
+                <div class="header-left">
+                    <div class="campagne-selector">
+                        <i class="fas fa-calendar-alt"></i>
+                        <select class="campagne-select">
+                            <option>2025-2026</option>
+                            <option>2024-2025</option>
+                            <option>2023-2024</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="header-right">
+                    <div class="status-badge active">
+                        <i class="fas fa-circle"></i>
+                        SYSTÈME ACTIF
+                    </div>
+
+                    <div class="notification-bell">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-count">3</span>
+                    </div>
+
+                    <div class="user-profile">
+                        <div class="user-avatar">{{ current_user.full_name[0] }}</div>
+                        <div class="user-info">
+                            <div class="user-name">{{ current_user.full_name }}</div>
+                            <div class="user-role">{% if current_user.is_admin %}Administrateur{% else %}Utilisateur{% endif %}</div>
+                        </div>
+                        <div class="user-menu-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="user-dropdown">
+                            <a href="#"><i class="fas fa-user"></i> Mon profil</a>
+                            <a href="#"><i class="fas fa-cog"></i> Paramètres</a>
+                            <hr>
+                            <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        <i class="fas fa-{% if category == 'success' %}check-circle{% elif category == 'danger' %}exclamation-circle{% elif category == 'warning' %}exclamation-triangle{% else %}info-circle{% endif %}"></i>
+                        <span>{{ message }}</span>
+                        <button class="alert-close" onclick="this.parentElement.remove()">×</button>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endwith %}
+
+            <!-- Page Content -->
+            <div class="page-content">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <!-- Layout pour les pages publiques (login, etc.) -->
+    <div class="public-layout">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    <i class="fas fa-{% if category == 'success' %}check-circle{% elif category == 'danger' %}exclamation-circle{% elif category == 'warning' %}exclamation-triangle{% else %}info-circle{% endif %}"></i>
+                    <span>{{ message }}</span>
+                    <button class="alert-close" onclick="this.parentElement.remove()">×</button>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block public_content %}{% endblock %}
+    </div>
+    {% endif %}
+
+    <!-- JavaScript -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Catalogue Produits - TuberSYS 3.0{% endblock %}
+
+{% block content %}
+<div class="page-header" style="display: flex; justify-content: space-between; align-items: center;">
+    <div>
+        <h1 class="page-title">
+            <i class="fas fa-tag"></i> Catalogue Produits
+        </h1>
+        <p class="page-subtitle">Gestion des produits et variétés</p>
+    </div>
+    <button class="btn btn-primary" onclick="alert('Fonctionnalité en développement')">
+        <i class="fas fa-plus"></i>
+        Nouveau Produit
+    </button>
+</div>
+
+<div class="kpi-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+    <div class="kpi-card">
+        <div class="kpi-header">
+            <div class="kpi-title">TOTAL PRODUITS</div>
+            <div class="kpi-icon primary">
+                <i class="fas fa-box"></i>
+            </div>
+        </div>
+        <div class="kpi-value">{{ products|length }}</div>
+    </div>
+</div>
+
+<div class="card" style="margin-top: 30px;">
+    <div class="card-header">
+        <h3 class="card-title">Liste des Produits</h3>
+        <input type="text" placeholder="Rechercher..." style="width: 300px;">
+    </div>
+
+    {% if products %}
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Référence</th>
+                    <th>Nom</th>
+                    <th>Catégorie</th>
+                    <th>Variété</th>
+                    <th>Prix</th>
+                    <th>Unité</th>
+                    <th>Statut</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                <tr>
+                    <td><strong>{{ product.reference }}</strong></td>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.category or '-' }}</td>
+                    <td>{{ product.variety or '-' }}</td>
+                    <td>{{ product.price|format_currency }}</td>
+                    <td>{{ product.unit }}</td>
+                    <td>
+                        {% if product.is_active %}
+                        <span style="color: var(--success);"><i class="fas fa-check-circle"></i> Actif</span>
+                        {% else %}
+                        <span style="color: var(--danger);"><i class="fas fa-times-circle"></i> Inactif</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-secondary" onclick="alert('Fonctionnalité en développement')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-box"></i>
+        <h3>Aucun produit</h3>
+        <p>Ajoutez votre premier produit au catalogue</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+
+{% block title %}Administration - TuberSYS 3.0{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">
+        <i class="fas fa-cog"></i> Administration
+    </h1>
+    <p class="page-subtitle">Gestion des utilisateurs et des permissions</p>
+</div>
+
+<!-- Statistiques Admin -->
+<div class="kpi-grid">
+    <div class="kpi-card">
+        <div class="kpi-header">
+            <div>
+                <div class="kpi-title">UTILISATEURS</div>
+            </div>
+            <div class="kpi-icon primary">
+                <i class="fas fa-users"></i>
+            </div>
+        </div>
+        <div class="kpi-value">{{ users|length }}</div>
+        <div class="kpi-subtitle">Comptes actifs</div>
+    </div>
+
+    <div class="kpi-card">
+        <div class="kpi-header">
+            <div>
+                <div class="kpi-title">MODULES</div>
+            </div>
+            <div class="kpi-icon success">
+                <i class="fas fa-th-large"></i>
+            </div>
+        </div>
+        <div class="kpi-value">{{ modules|length }}</div>
+        <div class="kpi-subtitle">Modules disponibles</div>
+    </div>
+
+    <div class="kpi-card">
+        <div class="kpi-header">
+            <div>
+                <div class="kpi-title">ADMINISTRATEURS</div>
+            </div>
+            <div class="kpi-icon warning">
+                <i class="fas fa-user-shield"></i>
+            </div>
+        </div>
+        <div class="kpi-value">{{ users|selectattr('is_admin')|list|length }}</div>
+        <div class="kpi-subtitle">Comptes admin</div>
+    </div>
+
+    <div class="kpi-card">
+        <div class="kpi-header">
+            <div>
+                <div class="kpi-title">BASE DE DONNÉES</div>
+            </div>
+            <div class="kpi-icon info">
+                <i class="fas fa-database"></i>
+            </div>
+        </div>
+        <div class="kpi-value">SQLite</div>
+        <div class="kpi-subtitle">Un seul fichier .db</div>
+    </div>
+</div>
+
+<!-- Actions rapides -->
+<div class="card" style="margin-top: 30px;">
+    <div class="card-header">
+        <h3 class="card-title">Actions d'Administration</h3>
+    </div>
+    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+        <a href="{{ url_for('admin_users') }}" class="btn btn-primary">
+            <i class="fas fa-users"></i>
+            Gérer les Utilisateurs
+        </a>
+        <a href="{{ url_for('admin_create_user') }}" class="btn btn-success">
+            <i class="fas fa-user-plus"></i>
+            Créer un Utilisateur
+        </a>
+        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i>
+            Retour au Dashboard
+        </a>
+    </div>
+</div>
+
+<!-- Liste des utilisateurs récents -->
+<div class="card" style="margin-top: 30px;">
+    <div class="card-header">
+        <h3 class="card-title">Utilisateurs Récents</h3>
+        <a href="{{ url_for('admin_users') }}" class="btn btn-sm btn-secondary">Voir tous</a>
+    </div>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Utilisateur</th>
+                    <th>Email</th>
+                    <th>Rôle</th>
+                    <th>Statut</th>
+                    <th>Date création</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users[:5] %}
+                <tr>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="width: 32px; height: 32px; background: var(--primary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600;">
+                                {{ user.full_name[0] }}
+                            </div>
+                            <div>
+                                <div style="font-weight: 600;">{{ user.full_name }}</div>
+                                <div style="font-size: 12px; color: var(--text-secondary);">@{{ user.username }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                        {% if user.is_admin %}
+                        <span style="background: var(--warning); color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600;">
+                            <i class="fas fa-shield-alt"></i> ADMIN
+                        </span>
+                        {% else %}
+                        <span style="background: var(--info); color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600;">
+                            <i class="fas fa-user"></i> USER
+                        </span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if user.is_active %}
+                        <span style="color: var(--success);">
+                            <i class="fas fa-check-circle"></i> Actif
+                        </span>
+                        {% else %}
+                        <span style="color: var(--danger);">
+                            <i class="fas fa-times-circle"></i> Inactif
+                        </span>
+                        {% endif %}
+                    </td>
+                    <td>{{ user.created_at|format_date }}</td>
+                    <td>
+                        <div style="display: flex; gap: 5px;">
+                            <a href="{{ url_for('admin_user_permissions', user_id=user.id) }}" class="btn btn-sm btn-secondary" title="Gérer les permissions">
+                                <i class="fas fa-key"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Information Multi-PC -->
+<div class="card" style="margin-top: 30px; background: rgba(59, 130, 246, 0.1); border-color: var(--info);">
+    <div style="display: flex; gap: 20px; align-items: start;">
+        <div style="font-size: 48px; color: var(--info);">
+            <i class="fas fa-network-wired"></i>
+        </div>
+        <div>
+            <h3 style="margin-bottom: 10px; color: var(--info);">
+                <i class="fas fa-info-circle"></i> Configuration Multi-PC
+            </h3>
+            <p style="margin-bottom: 10px; color: var(--text-primary);">
+                Pour partager les données entre plusieurs ordinateurs, placez le fichier de base de données sur un dossier partagé réseau ou cloud (Dropbox, OneDrive, etc.)
+            </p>
+            <p style="font-size: 12px; color: var(--text-secondary);">
+                <strong>Fichier actuel:</strong> <code style="background: var(--bg-sidebar); padding: 4px 8px; border-radius: 4px;">./data/tubersys.db</code>
+            </p>
+            <p style="font-size: 12px; color: var(--text-secondary); margin-top: 5px;">
+                Pour modifier l'emplacement, éditez le fichier <code style="background: var(--bg-sidebar); padding: 4px 8px; border-radius: 4px;">.env</code> et changez <strong>DATABASE_PATH</strong>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

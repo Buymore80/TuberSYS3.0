@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}Clients - TuberSYS 3.0{% endblock %}
+
+{% block content %}
+<div class="page-header" style="display: flex; justify-content: space-between; align-items: center;">
+    <div>
+        <h1 class="page-title">
+            <i class="fas fa-users"></i> Clients
+        </h1>
+        <p class="page-subtitle">Gestion de la base clients</p>
+    </div>
+    <button class="btn btn-primary" onclick="alert('Fonctionnalité en développement')">
+        <i class="fas fa-user-plus"></i>
+        Nouveau Client
+    </button>
+</div>
+
+<!-- KPIs Clients -->
+<div class="kpi-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+    <div class="kpi-card">
+        <div class="kpi-header">
+            <div class="kpi-title">TOTAL CLIENTS</div>
+            <div class="kpi-icon primary">
+                <i class="fas fa-users"></i>
+            </div>
+        </div>
+        <div class="kpi-value">{{ clients|length }}</div>
+    </div>
+
+    <div class="kpi-card">
+        <div class="kpi-header">
+            <div class="kpi-title">CLIENTS ACTIFS</div>
+            <div class="kpi-icon success">
+                <i class="fas fa-check-circle"></i>
+            </div>
+        </div>
+        <div class="kpi-value">{{ clients|selectattr('is_active')|list|length }}</div>
+    </div>
+</div>
+
+<!-- Liste des clients -->
+<div class="card" style="margin-top: 30px;">
+    <div class="card-header">
+        <h3 class="card-title">Liste des Clients</h3>
+        <input type="text" placeholder="Rechercher un client..." style="width: 300px;" onkeyup="filterTable(this.value)">
+    </div>
+
+    {% if clients %}
+    <div class="table-container">
+        <table id="clientsTable">
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Entreprise</th>
+                    <th>Email</th>
+                    <th>Téléphone</th>
+                    <th>Ville</th>
+                    <th>Statut</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for client in clients %}
+                <tr>
+                    <td>
+                        <div style="font-weight: 600;">{{ client.name }}</div>
+                    </td>
+                    <td>{{ client.company or '-' }}</td>
+                    <td>{{ client.email or '-' }}</td>
+                    <td>{{ client.phone or '-' }}</td>
+                    <td>{{ client.city or '-' }}</td>
+                    <td>
+                        {% if client.is_active %}
+                        <span style="color: var(--success);">
+                            <i class="fas fa-check-circle"></i> Actif
+                        </span>
+                        {% else %}
+                        <span style="color: var(--danger);">
+                            <i class="fas fa-times-circle"></i> Inactif
+                        </span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div style="display: flex; gap: 5px;">
+                            <button class="btn btn-sm btn-secondary" title="Voir" onclick="alert('Fonctionnalité en développement')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-sm btn-primary" title="Modifier" onclick="alert('Fonctionnalité en développement')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-users"></i>
+        <h3>Aucun client</h3>
+        <p>Commencez par ajouter votre premier client</p>
+        <button class="btn btn-primary" style="margin-top: 20px;" onclick="alert('Fonctionnalité en développement')">
+            <i class="fas fa-plus"></i>
+            Ajouter un client
+        </button>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function filterTable(value) {
+    const table = document.getElementById('clientsTable');
+    const rows = table.getElementsByTagName('tr');
+    const filter = value.toLowerCase();
+
+    for (let i = 1; i < rows.length; i++) {
+        const row = rows[i];
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(filter) ? '' : 'none';
+    }
+}
+</script>
+{% endblock %}

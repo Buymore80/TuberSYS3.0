@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}Gestion des Utilisateurs - TuberSYS 3.0{% endblock %}
+
+{% block content %}
+<div class="page-header" style="display: flex; justify-content: space-between; align-items: center;">
+    <div>
+        <h1 class="page-title">
+            <i class="fas fa-users"></i> Gestion des Utilisateurs
+        </h1>
+        <p class="page-subtitle">Créer et gérer les utilisateurs et leurs permissions</p>
+    </div>
+    <a href="{{ url_for('admin_create_user') }}" class="btn btn-primary">
+        <i class="fas fa-user-plus"></i>
+        Nouvel Utilisateur
+    </a>
+</div>
+
+<!-- Liste des utilisateurs -->
+<div class="card" style="margin-top: 30px;">
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Utilisateur</th>
+                    <th>Email</th>
+                    <th>Rôle</th>
+                    <th>Statut</th>
+                    <th>Modules autorisés</th>
+                    <th>Créé le</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 40px; height: 40px; background: var(--primary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 16px;">
+                                {{ user.full_name[0] }}
+                            </div>
+                            <div>
+                                <div style="font-weight: 600; font-size: 15px;">{{ user.full_name }}</div>
+                                <div style="font-size: 12px; color: var(--text-secondary);">@{{ user.username }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                        {% if user.is_admin %}
+                        <span style="background: var(--warning); color: white; padding: 5px 12px; border-radius: 15px; font-size: 11px; font-weight: 600;">
+                            <i class="fas fa-shield-alt"></i> ADMINISTRATEUR
+                        </span>
+                        {% else %}
+                        <span style="background: var(--info); color: white; padding: 5px 12px; border-radius: 15px; font-size: 11px; font-weight: 600;">
+                            <i class="fas fa-user"></i> UTILISATEUR
+                        </span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <label class="switch" style="position: relative; display: inline-block; width: 50px; height: 24px;">
+                            <input type="checkbox" {% if user.is_active %}checked{% endif %} onchange="toggleUserActive({{ user.id }}, this)">
+                            <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border-color); transition: 0.3s; border-radius: 24px;"></span>
+                        </label>
+                    </td>
+                    <td>
+                        {% if user.is_admin %}
+                        <span style="color: var(--success);">
+                            <i class="fas fa-check-circle"></i> Tous les modules
+                        </span>
+                        {% else %}
+                        <span style="color: var(--text-secondary);">
+                            {{ user.permissions|length }} module(s)
+                        </span>
+                        {% endif %}
+                    </td>
+                    <td>{{ user.created_at|format_date }}</td>
+                    <td>
+                        <div style="display: flex; gap: 8px;">
+                            <a href="{{ url_for('admin_user_permissions', user_id=user.id) }}" class="btn btn-sm btn-primary" title="Gérer les permissions">
+                                <i class="fas fa-key"></i> Permissions
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div style="margin-top: 20px;">
+    <a href="{{ url_for('admin') }}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i>
+        Retour à l'administration
+    </a>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function toggleUserActive(userId, checkbox) {
+    fetch(`/admin/users/${userId}/toggle-active`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Afficher un message de succès
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-success';
+            alert.innerHTML = `<i class="fas fa-check-circle"></i><span>${data.message}</span><button class="alert-close" onclick="this.parentElement.remove()">×</button>`;
+
+            const flashContainer = document.querySelector('.flash-messages') || document.createElement('div');
+            flashContainer.className = 'flash-messages';
+            flashContainer.appendChild(alert);
+
+            if (!document.querySelector('.flash-messages')) {
+                document.querySelector('.page-content').prepend(flashContainer);
+            }
+
+            setTimeout(() => alert.remove(), 3000);
+        } else {
+            checkbox.checked = !checkbox.checked;
+            alert('Erreur lors de la modification du statut');
+        }
+    })
+    .catch(error => {
+        checkbox.checked = !checkbox.checked;
+        alert('Erreur lors de la modification du statut');
+        console.error('Error:', error);
+    });
+}
+</script>
+{% endblock %}

@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}Permissions - {{ user.full_name }} - TuberSYS 3.0{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">
+        <i class="fas fa-key"></i> Gérer les Permissions
+    </h1>
+    <p class="page-subtitle">Utilisateur: <strong>{{ user.full_name }}</strong> (@{{ user.username }})</p>
+</div>
+
+{% if user.is_admin %}
+<div class="card" style="margin-top: 30px; background: rgba(245, 158, 11, 0.1); border-color: var(--warning);">
+    <h4 style="color: var(--warning); margin-bottom: 10px;">
+        <i class="fas fa-shield-alt"></i> Utilisateur Administrateur
+    </h4>
+    <p style="color: var(--text-primary);">
+        Cet utilisateur est un administrateur et a automatiquement accès à tous les modules de l'ERP.
+        Vous n'avez pas besoin de définir de permissions spécifiques.
+    </p>
+</div>
+{% else %}
+<div class="card" style="margin-top: 30px;">
+    <p style="margin-bottom: 25px; color: var(--text-secondary);">
+        Sélectionnez les modules auxquels <strong>{{ user.full_name }}</strong> aura accès.
+        Les modules non cochés ne seront pas visibles dans le menu de navigation.
+    </p>
+
+    <form method="POST" action="{{ url_for('admin_user_permissions', user_id=user.id) }}">
+        {% set modules_by_category = {} %}
+        {% for module in modules %}
+            {% if module.category not in modules_by_category %}
+                {% set _ = modules_by_category.update({module.category: []}) %}
+            {% endif %}
+            {% set _ = modules_by_category[module.category].append(module) %}
+        {% endfor %}
+
+        {% for category, category_modules in modules_by_category.items() %}
+        <div style="margin-bottom: 35px;">
+            <h3 style="font-size: 16px; font-weight: 600; color: var(--primary-color); margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid var(--border-color);">
+                <i class="fas fa-folder"></i> {{ category }}
+            </h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px;">
+                {% for module in category_modules %}
+                <label class="module-permission-item" style="display: flex; align-items: center; gap: 12px; padding: 15px; background: var(--bg-sidebar); border: 2px solid var(--border-color); border-radius: 10px; cursor: pointer; transition: all 0.2s ease;">
+                    <input type="checkbox" name="module_{{ module.id }}" id="module_{{ module.id }}"
+                           {% if module.id in user_permissions %}checked{% endif %}
+                           style="width: 20px; height: 20px; cursor: pointer;">
+                    <div style="flex: 1;">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 3px;">
+                            <i class="fas {{ module.icon }}" style="color: var(--primary-color);"></i>
+                            <span style="font-weight: 600; color: var(--text-primary);">{{ module.name }}</span>
+                        </div>
+                        <small style="color: var(--text-secondary); font-size: 11px;">{{ module.code }}</small>
+                    </div>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+
+        <div style="display: flex; gap: 15px; margin-top: 30px; padding-top: 25px; border-top: 1px solid var(--border-color);">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-check"></i>
+                Enregistrer les Permissions
+            </button>
+            <a href="{{ url_for('admin_users') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i>
+                Retour
+            </a>
+            <button type="button" onclick="selectAll()" class="btn btn-secondary" style="margin-left: auto;">
+                <i class="fas fa-check-double"></i>
+                Tout sélectionner
+            </button>
+            <button type="button" onclick="deselectAll()" class="btn btn-secondary">
+                <i class="fas fa-times"></i>
+                Tout désélectionner
+            </button>
+        </div>
+    </form>
+</div>
+{% endif %}
+
+<div style="margin-top: 20px;">
+    <a href="{{ url_for('admin_users') }}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i>
+        Retour aux utilisateurs
+    </a>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Effet visuel sur les items sélectionnés
+document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+    checkbox.addEventListener('change', function() {
+        const item = this.closest('.module-permission-item');
+        if (this.checked) {
+            item.style.borderColor = 'var(--primary-color)';
+            item.style.background = 'rgba(255, 149, 0, 0.1)';
+        } else {
+            item.style.borderColor = 'var(--border-color)';
+            item.style.background = 'var(--bg-sidebar)';
+        }
+    });
+
+    // Appliquer l'effet initial
+    const item = checkbox.closest('.module-permission-item');
+    if (item && checkbox.checked) {
+        item.style.borderColor = 'var(--primary-color)';
+        item.style.background = 'rgba(255, 149, 0, 0.1)';
+    }
+});
+
+function selectAll() {
+    document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+        checkbox.checked = true;
+        checkbox.dispatchEvent(new Event('change'));
+    });
+}
+
+function deselectAll() {
+    document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+        checkbox.checked = false;
+        checkbox.dispatchEvent(new Event('change'));
+    });
+}
+</script>
+{% endblock %}

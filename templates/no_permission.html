@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Accès Refusé - TuberSYS 3.0{% endblock %}
+
+{% block content %}
+<div class="empty-state" style="min-height: 60vh; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+    <i class="fas fa-lock" style="font-size: 80px; color: var(--danger); margin-bottom: 30px;"></i>
+    <h2 style="font-size: 32px; margin-bottom: 15px; color: var(--text-primary);">Accès Refusé</h2>
+    <p style="font-size: 16px; color: var(--text-secondary); margin-bottom: 30px;">Vous n'avez pas les permissions nécessaires pour accéder à ce module.</p>
+    <a href="{{ url_for('dashboard') }}" class="btn btn-primary">
+        <i class="fas fa-home"></i>
+        Retour au tableau de bord
+    </a>
+</div>
+{% endblock %}

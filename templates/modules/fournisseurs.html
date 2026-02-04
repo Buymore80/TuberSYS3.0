@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Fournisseurs - TuberSYS 3.0{% endblock %}
+{% block content %}
+<div class="page-header" style="display: flex; justify-content: space-between; align-items: center;">
+    <div>
+        <h1 class="page-title"><i class="fas fa-truck"></i> Fournisseurs</h1>
+        <p class="page-subtitle">Gestion des fournisseurs</p>
+    </div>
+    <button class="btn btn-primary" onclick="alert('Fonctionnalité en développement')">
+        <i class="fas fa-plus"></i> Nouveau Fournisseur
+    </button>
+</div>
+<div class="card" style="margin-top: 30px;">
+    {% if suppliers %}
+    <div class="table-container">
+        <table>
+            <thead><tr><th>Nom</th><th>Entreprise</th><th>Email</th><th>Téléphone</th><th>Statut</th><th>Actions</th></tr></thead>
+            <tbody>
+                {% for supplier in suppliers %}
+                <tr>
+                    <td><strong>{{ supplier.name }}</strong></td>
+                    <td>{{ supplier.company or '-' }}</td>
+                    <td>{{ supplier.email or '-' }}</td>
+                    <td>{{ supplier.phone or '-' }}</td>
+                    <td>{% if supplier.is_active %}<span style="color: var(--success);"><i class="fas fa-check-circle"></i> Actif</span>{% else %}<span style="color: var(--danger);"><i class="fas fa-times-circle"></i> Inactif</span>{% endif %}</td>
+                    <td><button class="btn btn-sm btn-secondary"><i class="fas fa-edit"></i></button></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-truck"></i>
+        <h3>Aucun fournisseur</h3>
+        <p>Ajoutez votre premier fournisseur</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

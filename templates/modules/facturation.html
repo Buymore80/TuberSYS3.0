@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Facturation - TuberSYS 3.0{% endblock %}
+{% block content %}
+<div class="page-header" style="display: flex; justify-content: space-between; align-items: center;">
+    <div>
+        <h1 class="page-title"><i class="fas fa-file-invoice"></i> Facturation</h1>
+        <p class="page-subtitle">Gestion des factures</p>
+    </div>
+    <button class="btn btn-primary" onclick="alert('Fonctionnalité en développement')">
+        <i class="fas fa-plus"></i> Nouvelle Facture
+    </button>
+</div>
+<div class="card" style="margin-top: 30px;">
+    {% if invoices %}
+    <div class="table-container">
+        <table>
+            <thead><tr><th>N° Facture</th><th>Client</th><th>Date</th><th>Échéance</th><th>Montant</th><th>Statut</th><th>Actions</th></tr></thead>
+            <tbody>
+                {% for invoice in invoices %}
+                <tr>
+                    <td><strong>{{ invoice.invoice_number }}</strong></td>
+                    <td>{{ invoice.client.name }}</td>
+                    <td>{{ invoice.issue_date|format_date }}</td>
+                    <td>{{ invoice.due_date|format_date }}</td>
+                    <td>{{ invoice.total_amount|format_currency }}</td>
+                    <td>{{ invoice.status }}</td>
+                    <td><button class="btn btn-sm btn-secondary"><i class="fas fa-eye"></i></button></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-file-invoice"></i>
+        <h3>Aucune facture</h3>
+        <p>Les factures apparaîtront ici</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

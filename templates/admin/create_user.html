@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}Créer un Utilisateur - TuberSYS 3.0{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">
+        <i class="fas fa-user-plus"></i> Créer un Nouvel Utilisateur
+    </h1>
+    <p class="page-subtitle">Ajouter un utilisateur et définir ses permissions</p>
+</div>
+
+<div class="card" style="margin-top: 30px; max-width: 700px;">
+    <form method="POST" action="{{ url_for('admin_create_user') }}">
+        <div style="display: grid; grid-template-columns: 1fr; gap: 20px;">
+            <div class="form-group">
+                <label for="username">
+                    <i class="fas fa-user"></i> Nom d'utilisateur *
+                </label>
+                <input type="text" id="username" name="username" required placeholder="Ex: jdupont">
+                <small style="color: var(--text-secondary); font-size: 12px; display: block; margin-top: 5px;">
+                    Utilisé pour la connexion. Doit être unique.
+                </small>
+            </div>
+
+            <div class="form-group">
+                <label for="full_name">
+                    <i class="fas fa-id-card"></i> Nom complet *
+                </label>
+                <input type="text" id="full_name" name="full_name" required placeholder="Ex: Jean Dupont">
+            </div>
+
+            <div class="form-group">
+                <label for="email">
+                    <i class="fas fa-envelope"></i> Email *
+                </label>
+                <input type="email" id="email" name="email" required placeholder="Ex: jean.dupont@example.com">
+            </div>
+
+            <div class="form-group">
+                <label for="password">
+                    <i class="fas fa-lock"></i> Mot de passe *
+                </label>
+                <input type="password" id="password" name="password" required placeholder="Minimum 6 caractères">
+                <small style="color: var(--text-secondary); font-size: 12px; display: block; margin-top: 5px;">
+                    Choisissez un mot de passe sécurisé. Il sera hashé dans la base de données.
+                </small>
+            </div>
+
+            <div class="form-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" name="is_admin" id="is_admin">
+                    <span>
+                        <i class="fas fa-shield-alt"></i> Administrateur
+                        <small style="display: block; color: var(--text-secondary); font-size: 11px; margin-left: 24px;">
+                            Les administrateurs ont accès à tous les modules et à l'interface d'administration
+                        </small>
+                    </span>
+                </label>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 15px; margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--border-color);">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-check"></i>
+                Créer l'utilisateur
+            </button>
+            <a href="{{ url_for('admin_users') }}" class="btn btn-secondary">
+                <i class="fas fa-times"></i>
+                Annuler
+            </a>
+        </div>
+    </form>
+</div>
+
+<div class="card" style="margin-top: 20px; max-width: 700px; background: rgba(59, 130, 246, 0.1); border-color: var(--info);">
+    <h4 style="color: var(--info); margin-bottom: 10px;">
+        <i class="fas fa-info-circle"></i> Information importante
+    </h4>
+    <p style="color: var(--text-primary); margin-bottom: 10px;">
+        Après la création de l'utilisateur, vous devrez définir les modules auxquels il aura accès en cliquant sur "Gérer les permissions" dans la liste des utilisateurs.
+    </p>
+    <p style="color: var(--text-secondary); font-size: 12px;">
+        Les utilisateurs sans permissions ne pourront accéder à aucun module (sauf les administrateurs qui ont accès à tout).
+    </p>
+</div>
+{% endblock %}
