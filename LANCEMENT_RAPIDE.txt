@@ -1,0 +1,99 @@
+╔════════════════════════════════════════════════════╗
+║   TuberSYS 3.0 - LANCEMENT ULTRA RAPIDE          ║
+║         Votre ERP en ligne en 1 commande         ║
+╚════════════════════════════════════════════════════╝
+
+📍 VOUS ÊTES ICI : /home/user/TuberSYS3.0
+
+
+🚀 MÉTHODE 1 : TOUT AUTOMATIQUE (Recommandé)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Ouvrez un terminal et tapez :
+
+    cd /home/user/TuberSYS3.0
+    python3 lancer_en_ligne.py
+
+C'EST TOUT ! 🎉
+
+Le script va :
+✅ Installer pyngrok (une fois)
+✅ Lancer l'application Flask
+✅ Créer un tunnel HTTPS gratuit
+✅ Vous donner une URL publique
+
+Exemple d'URL : https://abc123.ngrok.io
+
+
+📱 MÉTHODE 2 : Manuel (2 terminaux)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Terminal 1 - Lancer l'application :
+    cd /home/user/TuberSYS3.0
+    python3 app.py
+
+Terminal 2 - Créer le tunnel :
+    python3 tunnel.py
+
+
+🔑 CONNEXION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Username : admin
+Password : admin123
+
+⚠️  CHANGEZ CE MOT DE PASSE après la première connexion !
+
+
+💡 ASTUCE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+• L'URL change à chaque lancement (version gratuite)
+• Pour une URL fixe, créez un compte gratuit sur ngrok.com
+• Monitoring : http://localhost:4040
+• Logs : app.log
+
+
+📚 GUIDES DISPONIBLES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+• README.md - Documentation complète
+• GUIDE_DEMARRAGE.md - Guide rapide
+• MISE_EN_LIGNE_FACILE.md - Toutes les méthodes
+• ACCES_RESEAU.md - Accès réseau local
+• ACCES_IMMEDIAT_EN_LIGNE.md - Alternatives
+
+
+🛑 ARRÊTER L'APPLICATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Appuyez sur Ctrl+C dans le terminal
+
+
+❓ PROBLÈMES ?
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+"command not found: python3"
+→ Utilisez : python lancer_en_ligne.py
+
+"Module pyngrok not found"
+→ Installez : pip install pyngrok
+
+"Port 5000 already in use"
+→ Arrêtez l'autre processus : pkill -f "python.*app.py"
+
+
+✅ PRÊT À DÉMARRER !
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Tapez simplement :
+
+    python3 lancer_en_ligne.py
+
+Et partagez l'URL qui s'affiche ! 🌍
+
+
+═══════════════════════════════════════════════════
+   TuberSYS 3.0 - ERP Ultra Complet
+   100% Gratuit | 100% Fonctionnel
+═══════════════════════════════════════════════════
