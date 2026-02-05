@@ -14,8 +14,13 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
+
+# Construire le chemin absolu de la base de données basé sur l'emplacement du script
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, 'data', 'tubersys.db')
+
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-key-change-in-production')
-app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.getenv('DATABASE_PATH', './data/tubersys.db')}"
+app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{DB_PATH}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialisation des extensions
@@ -468,11 +473,12 @@ def format_currency(amount):
 def init_db():
     """Initialiser la base de données"""
     with app.app_context():
-        # Créer le dossier data s'il n'existe pas
-        db_path = os.getenv('DATABASE_PATH', './data/tubersys.db')
-        db_dir = os.path.dirname(db_path)
-        if db_dir:
-            os.makedirs(db_dir, exist_ok=True)
+        # Créer le dossier data s'il n'existe pas (utilise le même chemin que la config)
+        db_dir = os.path.join(BASE_DIR, 'data')
+        os.makedirs(db_dir, exist_ok=True)
+
+        print(f"📁 Dossier de la base de données : {db_dir}")
+        print(f"📄 Fichier de la base de données : {DB_PATH}")
 
         # Créer les tables
         db.create_all()
